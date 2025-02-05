@@ -1,0 +1,24 @@
+dbt_1_9:    # ~/dev/dbt19/dbt $ dbt init    Your new dbt project "dbt_1_9" was created!
+  outputs:
+    dev:
+      dataset: '"{{ env_var(''YOUR_DBT_DEV_DATASET'') }}"'
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      location: US
+      method: oauth
+      priority: interactive
+      project: henrytxz
+      threads: 4
+      type: bigquery
+  target: dev
+
+default:
+  outputs:
+    dev:
+      dataset: '{{ env_var(''YOUR_DBT_DEV_DATASET'') }}'
+      location: US
+      method: oauth
+      project: henrytxz
+      threads: 4
+      type: bigquery
+  target: dev
