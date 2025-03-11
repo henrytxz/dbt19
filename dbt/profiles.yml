@@ -1,17 +1,3 @@
-dbt_1_9:    # ~/dev/dbt19/dbt $ dbt init    Your new dbt project "dbt_1_9" was created!
-  outputs:
-    dev:
-      dataset: '"{{ env_var(''YOUR_DBT_DEV_DATASET'') }}"'
-      job_execution_timeout_seconds: 300
-      job_retries: 1
-      location: US
-      method: oauth
-      priority: interactive
-      project: henrytxz
-      threads: 4
-      type: bigquery
-  target: dev
-
 default:
   outputs:
     dev:
@@ -22,3 +8,19 @@ default:
       threads: 4
       type: bigquery
   target: dev
+
+bq:             # <profile-name>
+  target: dev   # <target-name> the default target your dbt project will use
+  outputs:
+    dev:        # <target-name>
+      dataset: '{{ env_var(''YOUR_DBT_DEV_DATASET'') }}'
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      location: US
+      method: oauth
+      priority: interactive
+      project: henrytxz
+      threads: 4
+      type: bigquery
+
+    a_second_target:
