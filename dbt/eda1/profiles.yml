@@ -1,26 +1,34 @@
-default:
+dev:            # <profile-name>
+  target: dev
   outputs:
     dev:
       dataset: '{{ env_var(''YOUR_DBT_DEV_DATASET'') }}'
-      location: US
       method: oauth
+      location: US
       project: henrytxz
       threads: 4
       type: bigquery
-  target: dev
 
-bq:             # <profile-name>
-  target: dev   # <target-name> the default target your dbt project will use
+audit:
+  target: audit
   outputs:
-    dev:        # <target-name>
-      dataset: '{{ env_var(''YOUR_DBT_DEV_DATASET'') }}'
-      job_execution_timeout_seconds: 300
-      job_retries: 1
+    audit:
+      dataset: data_demo_audit
+      method: service-account
+      keyfile: "{{ env_var('PATH_GCP_KEYFILE') }}"
       location: US
-      method: oauth
-      priority: interactive
       project: henrytxz
       threads: 4
       type: bigquery
 
-    a_second_target:
+prod:
+  target: prod
+  outputs:
+    audit:
+      dataset: data_demo_prod
+      method: service-account
+      keyfile: "{{ env_var('PATH_GCP_KEYFILE') }}"
+      location: US
+      project: henrytxz
+      threads: 4
+      type: bigquery
