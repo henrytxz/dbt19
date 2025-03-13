@@ -7,7 +7,7 @@ models:
     columns:
       - name: id
         description: "The primary key for this table"
-        data_tests:
+        tests:
           - unique
 
   - name: my_second_dbt_model
@@ -15,6 +15,7 @@ models:
     columns:
       - name: id
         description: "The primary key for this table"
-        data_tests:
+        tests:
+          - dbt_utils.at_least_one # Asserts this column has at least one non-null value.
           - unique
           - not_null
