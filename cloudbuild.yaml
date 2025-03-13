@@ -1,0 +1,43 @@
+steps:
+# Build + tag with commit SHA.
+- name: gcr.io/cloud-builders/docker
+  args: [ 'build', '-t', 'us-docker.pkg.dev/henrytxz/data-demo/dbt19:$SHORT_SHA',
+          '-t', 'us-docker.pkg.dev/henrytxz/data-demo/dbt19:latest', '.' ]
+
+# Pull the Service Account JSON from Secret Manager onto build server,
+# store it in /workspace folder (which persists between build steps)
+- name: us-docker.pkg.dev/henrytxz/data-demo/dbt19:latest
+  entrypoint: bash
+  args:
+    - -c
+    - mkdir /workspace/secrets && echo "$$SERVICE_ACCOUNT_KEY" > /workspace/secrets/dbt-user.json
+  secretEnv: [ 'SERVICE_ACCOUNT_KEY' ]
+
+# Let dbt build models and run tests (the "dbt build" command does it all)
+# run "dbt build --profile audit" inside my dbt container, mounting the Service Account JSON into it
+# and setting an environment variable PATH_GCP_KEYFILE so dbt knows where it is.
+- name: gcr.io/cloud-builders/docker
+  args:
+    - run
+    - --volume
+    - /workspace/secrets:/dbt/secrets
+    - --env
+    - PATH_GCP_KEYFILE=/dbt/secrets/dbt-user.json
+    - us-docker.pkg.dev/henrytxz/data-demo/dbt19:latest
+    - dbt
+    - build
+    - --profile
+    - audit
+
+# The images field tells Cloud Build to push these images to Artifact Registry.
+images:
+- 'us-docker.pkg.dev/henrytxz/data-demo/dbt19:$SHORT_SHA'
+- 'us-docker.pkg.dev/henrytxz/data-demo/dbt19:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/594714635691/secrets/dbt-user-service-account/versions/latest
+    env: SERVICE_ACCOUNT_KEY
