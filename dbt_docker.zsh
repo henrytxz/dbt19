@@ -7,19 +7,15 @@ To learn more about dbt, do \"./dbt_docker.sh dbt\" in your Terminal."
 
 help="Argument '$1' is invalid.\n\n$available_arguments"
 
-#target_image=us-docker.pkg.dev/henrytxz/data-demo/data-demo-dbt:latest
 target_image=eda1:latest
-#echo $#
-#echo "$1"
 
 if [ $# -eq 0 ]; then
   printf "The ./dbt_docker.sh script requires a minimum of 1 argument.\n\nAvailable arguments: $available_arguments\n"
-elif [[ $# -eq 1 && "$1" == "update" ]]; then
-#  docker pull $target_image
-  echo "hello"
-  echo "world!"
 elif [[ "$1" == "dbt" && $# -gt 1 ]]; then
   # User wants to do something with dbt and provided argument or sub-command, so let's run it.
+
+  docker build -t $target_image . && \
+
   docker run --rm \
   --tty \
   --volume "$HOME"/.config/gcloud/:/"$HOME"/.config/gcloud \
